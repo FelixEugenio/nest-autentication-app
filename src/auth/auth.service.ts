@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Request} from 'express';
 import { sign } from 'jsonwebtoken';
 import { Model } from 'mongoose';
 import { User } from 'src/users/models/User';
@@ -25,5 +26,23 @@ export class AuthService {
        }
 
        return user;
+    }
+
+
+    private jwtExtractor(request: Request):string{
+        const authHeader = request.headers.authorization;
+
+        if(!authHeader){
+            throw new BadRequestException('Bad request')
+        }
+
+        const [,token] =  authHeader.split(' ');
+
+        return token;
+
+    }
+
+    public returnJwtExtractor(): (request:Request) => string{
+       return this.jwtExtractor;
     }
 }
