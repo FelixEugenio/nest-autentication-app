@@ -1,9 +1,10 @@
 /* eslint-disable prettier/prettier */
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { SignUpDTO } from './dto/signUp.dto';
 import { User } from './models/User';
 import { SignInDTO } from './dto/signIn.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('users')
 export class UsersController {
@@ -15,10 +16,17 @@ export class UsersController {
         return this.usersService.signUp(signUpDTO);
     }
 
-    @Post('signup')
+    @Post('signin')
     @HttpCode(200)
     public async signIn(@Body() signInDTO:SignInDTO):Promise<{name:string,jwtToken:string,email:string}>{
         return this.usersService.signIn(signInDTO);
+    }
+
+    @Get()
+    @UseGuards(AuthGuard('jwt'))
+    @HttpCode(200)
+    public async findAll():Promise<User[]>{
+        return this.usersService.findAll();
     }
 
 }
