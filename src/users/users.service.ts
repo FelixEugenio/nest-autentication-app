@@ -5,6 +5,7 @@ import { User } from './models/User';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { AuthService } from 'src/auth/auth.service';
+import { SignUpDTO } from './dto/signUp.dto';
 @Injectable()
 export class UsersService {
 
@@ -15,6 +16,9 @@ export class UsersService {
         private readonly authService: AuthService
     ) {} 
 
-    
+    public async signUp(signUpDTO:SignUpDTO):Promise<User>{
+       const user = new this.userModel(signUpDTO);
+       return user.save();
+    }
 
 }
